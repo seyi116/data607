@@ -1,0 +1,41 @@
+---
+title: "Week One Assignment"
+author: "Oluwaseyi Jimoh"
+date: "2024-02-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(tidyverse)
+```
+
+## Import data Into R
+
+
+
+```{r}
+nbaelo <- read.csv("https://projects.fivethirtyeight.com/nba-model/nba_elo.csv")
+```
+
+## Triming the data to exclude some empty columns
+
+```{r}
+df1 = subset(nbaelo, select = -c(carm.elo1_pre:raptor_prob2,importance:total_rating) )
+``` 
+
+## Further Trimming the data to show just from the 1990 NBA Season
+
+```{r}
+df4 <- filter(df1, season == "1990")
+```
+
+
+## View New Subset
+
+```{r}
+glimpse(df4)
+```
+Now instead of 73363 Obs of 27 Variables
+we have 1179 obs of 15 variables
