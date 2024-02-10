@@ -1,0 +1,78 @@
+---
+title: "Oluwaseyi Jimoh Week 3 Assignment"
+author: "Oluwaseyi Jimoh"
+date: "2024-02-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+### Question 1
+
+Using the github link, we import the data from github
+
+```{r}
+majors <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/majors-list.csv")
+```
+
+Creaty a vector out of the majors column
+
+```{r}
+major_vec<- as.vector(majors$Major)
+```
+
+From this vector we can run a quick search using | to depict or and ask r to show us majors from the vector maatching DATA or STAtistics
+
+
+```{r}
+grep('DATA|STATISTICS', major_vec, value= TRUE)
+```
+## Question 2
+
+Adding commas to delineate each string in the list helps r properly create a vector
+
+```{r}
+Vegetables <- c("bell pepper", "bilberry",   "blackberry", "blood orange", "blueberry",   "cantaloupe", "chili pepper", "cloudberry",  "elderberry" , "lime",     "lychee",     "mulberry" , "olive" , "salal berry")
+```
+
+
+## Question 3
+
+
+ (.)\1\1 : This regex will match any expressions as the backslashes are not escaped and the regx is not encased in quotes
+ 
+ "(.)(.)\\2\\1" : This regex will return 4 letters in a palindrome format where the firs 2 letters are repeated backwards e.g abba, otto, iddo
+ 
+ (..)\1 : This regex will match any expressions as the backslashes are not escaped and the regx is not encased in quotes
+ 
+ "(.).\\1.\\1" : This regex will match any expressions where the first letter is repeated 3 times with one character separating each iteration of the letter eg Bababa
+ 
+
+ "(.)(.)(.).*\\3\\2\\1" : Thie regex will match any expression where the first three letters are repeated at backwards with any number of characters in between them e.g reviver, abccba
+
+
+
+## Question 4
+
+```{r}
+sample_words <- c("church", "character", "banana","dad", "mom", "eleven", "bababa", "pepper")
+```
+
+Regex for words that start and end with the same character
+
+```{r}
+str_view(sample_words, "^(.).*\\1$")
+```
+Regex for words that contain a repeated pair of letters
+```{r}
+str_view(sample_words, "(..).*\\1")
+```
+Regex for word that contains one letter in at least 3 places
+
+```{r}
+str_view(sample_words, "(a.*){3,}")
+```
+
