@@ -1,0 +1,96 @@
+---
+title: "Project 1"
+author: "Oluwaseyi Jimoh"
+date: "2024-02-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## load packages
+
+```{r}
+library(tidyverse)
+library(RCurl)
+```
+
+### Import the data
+
+```{r}
+urldata="https://raw.githubusercontent.com/seyi116/data607/main/tournamentinfo.txt"
+chess_table <- read.csv(url(urldata))
+view(chess_table)
+```
+
+### Cleanup Data
+
+```{r}
+chesstableWIP <- chess_table[-c(1:2),]
+playerinfo<-chesstableWIP[seq(2, length(chesstableWIP), 3)]
+ratinginfo<-chesstableWIP[seq(3, length(chesstableWIP), 3)]
+chesstableWIP
+```
+
+
+### Extracting the Various Subsections
+
+First is the name
+```{r}
+Name <- str_trim(str_extract(playerinfo,"(\\w+\\s){2,4}"))
+
+Name
+```
+Up next is the points
+
+```{r}
+Points <- as.numeric(str_extract(playerinfo, "\\d.\\d"))
+
+Points
+```
+Each players Opponents
+```{r}
+Opponent <- str_extract_all(str_extract_all(playerinfo,"\\d+\\|"), "\\d+")
+
+Opponent
+```
+NOw we extract the players rtaings before and their states
+```{r}
+pre_rating <- as.integer(str_extract(str_extract(ratinginfo, "\\D\\d{3,4}\\D"), "\\d+")) 
+State <- str_extract(ratinginfo, "\\w\\w")
+pre_rating
+```
+
+```{r}
+State
+```
+
+
+TO get the average rating of the opponents, we create a unique ID column for each player and a have a loop that calculates the averages 
+```{r}
+ID <- c(1:64)
+
+avg_opp_pre_rating<- length(playerinfo)
+for (x in 1:length(playerinfo)){
+  avg_opp_pre_rating[x]<- round(mean(pre_rating[as.numeric(unlist(Opponent[ID[x]]))]), digits = 0)
+}
+
+avg_opp_pre_rating
+```
+
+Now that we have all we need, we can compile the data and create the data frame
+
+```{r}
+Final_data_frame <- data.frame(Name,State,Points,pre_rating,avg_opp_pre_rating)
+
+Final_data_frame
+```
+
+### Create Export File
+```{r}
+
+
+write.csv(Final_data_frame, "Chess_data.csv")
+```
+
