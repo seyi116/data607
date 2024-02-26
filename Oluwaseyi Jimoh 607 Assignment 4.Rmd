@@ -1,0 +1,93 @@
+---
+title: "Assignment 5 607"
+author: "Oluwaseyi Jimoh"
+date: "2024-02-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load packages
+```{r}
+library(dplyr)
+library(tidyr)
+
+```
+
+
+###Import Data
+```{r}
+dirtydata <- read.csv("https://raw.githubusercontent.com/seyi116/data607/main/alaksa%20am%20west%20flight%20data.csv", )
+```
+
+### Tidy Data
+
+First step is to rename some values
+```{r}
+dirtydata[1,2] <- "Alaska On Time"
+dirtydata[2,2] <- "Alaska Delayed"
+dirtydata[4,2] <- "Am West On Time"
+dirtydata[5,2] <- "Am West Delayed"
+
+```
+
+
+Next Step is to remove the Rows and columns we do not need
+```{r}
+Lessdirtydata <- dirtydata[-c(1,2)] %>%
+  slice(-3)
+  
+```
+
+
+Next we name the rows
+
+```{r}
+row.names(Lessdirtydata) <- c( "Alaska On Time", "Alaska Delayed", "Am West On Time", "Am West Delayed")
+
+```
+
+
+Then we create a totals column to facilitate analysis later on
+```{r}
+Lessdirtydata <- mutate(Lessdirtydata, "Totals" = Los.Angeles + Phoenix + San.Diego + San.Francisco + Seattle)
+```
+
+### Pivot Data
+```{r}
+TidyData <- 
+   data.frame(
+  t(Lessdirtydata)
+)
+```
+
+### Analysis
+To better Understand the data relative to rach other we need to create some new variables
+
+
+```{r}
+AnalysisData <- TidyData%>%
+  mutate("Alaska total_flights"= `Alaska.Delayed`+`Alaska.On.Time`)%>%
+  mutate("Am West total_flights"= `Am.West.Delayed`+ `Am.West.On.Time`)%>%
+  mutate("Alaska delay percentage"= `Alaska.Delayed`/(`Alaska.On.Time`+`Alaska.Delayed`))%>%
+  mutate("Am West delay percentage"= `Am.West.Delayed`/(`Am.West.On.Time`+`Am.West.Delayed`))%>%
+  round(digits = 3)
+```
+
+Visualization
+```{r}
+library(ggplot2)
+AnalysisData$Destination<- c("Los Angeles","Phoenix", "San Diego", "San Francisco", "Seattle", "Totals")
+ggplot(AnalysisData, aes(x=`Destination`, y=`Alaska delay percentage`)) +
+  geom_bar(position='dodge', stat='identity')
+```
+
+```{r}
+ggplot(AnalysisData, aes(x=Destination, y= `Am West delay percentage`)) +
+  geom_bar(position='dodge', stat='identity')
+```
+
+### Findings
+When we compare the two airlines based on the data available we see that although Am West has more delays, a smaller percentage of its flights are delayed. San francisco and seattle seem to be problem destinations for both airlines. 
